@@ -1,19 +1,29 @@
-import React from 'react'
-import { BarChart2, ShoppingCart, FileText, Users, Star, Coffee, Calendar, MessageCircle, Wallet } from 'lucide-react'
+import React from 'react';
+import { 
+  BarChart2, 
+  ShoppingCart, 
+  FileText, 
+  Users, 
+  Star, 
+  Coffee, 
+  Calendar, 
+  MessageCircle, 
+  Wallet 
+} from 'lucide-react';
 
-
-  const Sidebar=()=> {
+const Sidebar = () => {
   return (
     <div className="w-64 bg-white min-h-screen shadow-lg">
       <div className="p-4">
         <div className="flex items-center space-x-2">
-          <img src="/placeholder.svg?height=40&width=40" alt="" className="h-10" />
-          <span className="text-2xl font-bold bg-gradient-to-r from-green-500 to-orange-500 bg-clip-text text-transparent">
-            FoodKo
-          </span>
+          <img 
+            src="\src\uploads\logo-FoodKo.png" 
+            alt="FoodKo Logo" 
+            className="h-20 object-contain"
+          />
         </div>
       </div>
-      
+
       <nav className="mt-8">
         {[
           { icon: BarChart2, text: 'Dashboard', active: true },
@@ -43,7 +53,7 @@ import { BarChart2, ShoppingCart, FileText, Users, Star, Coffee, Calendar, Messa
         ))}
       </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

@@ -36,6 +36,7 @@ import { addOrderValidation } from "../utils/Validation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "../components/EditModal";
+import { generateExcelFile } from "../utils/ExcelDownload";
 
 const monthlyData = Array.from({ length: 12 }, (_, i) => ({
   name: [
@@ -62,6 +63,16 @@ const PieData = [
   { name: "Total Revenue", value: 68, color: "#FF6B6B" },
 ];
 
+const weeklyData = [
+  { name: "Day 1", value: 0 },
+  { name: "Day 2", value: 0 },
+  { name: "Day 3", value: 0 },
+  { name: "Day 4", value: 1 },
+  { name: "Day 5", value: 6 },
+  { name: "Day 6", value: 0 },
+  { name: "Day 7", value: 0 },
+];
+
 const data = [
   { name: "Jan", value2020: 4000, value2021: 2400 },
   { name: "Feb", value2020: 3000, value2021: 1398 },
@@ -84,7 +95,6 @@ const Dashboard = () => {
   const [totalOrder, setTotalOrderCount] = useState(0);
   const [totalDelivered, setDeliveredCount] = useState(0);
   const [totalCancellCount, setTotalCancelCount] = useState(0);
-  const [weeklyData, setWeeklyData] = useState([]);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -92,6 +102,10 @@ const Dashboard = () => {
   const handleEditClick = (order) => {
     setSelectedOrder(order);
     setIsEditModalOpen(true);
+  };
+
+  const handleExcelDownload = (orderData) => {
+    generateExcelFile(orderData);
   };
 
   useEffect(() => {
@@ -136,7 +150,6 @@ const Dashboard = () => {
     },
     validationSchema: addOrderValidation,
     onSubmit: (values, { resetForm }) => {
-      // handle form submission
       console.log("Form submitted", values);
 
       axios
@@ -168,6 +181,18 @@ const Dashboard = () => {
   const handleSubmitOrder = (e) => {
     e.preventDefault();
     setIsModalOpen(false);
+  };
+
+  const handleClearAllOrderDetails = async (req, res) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/orderDetails`);
+      if (response.status === 200) {
+        toast.success("Delete Success");
+      }
+    } catch (error) {
+      toast.error("Cannot delete all orders");
+      console.log(error);
+    }
   };
 
   const handleDeleteItem = async (orderId) => {
@@ -263,67 +288,72 @@ const Dashboard = () => {
         {/* Header */}
         <header className="bg-white shadow-sm px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="relative">
+            {/* Left section for the search bar */}
+            <div className="flex items-center flex-1 space-x-6">
+              <div className="relative w-full max-w-lg">
                 <input
                   type="text"
                   placeholder="Search here"
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <Search
                   className="absolute left-3 top-2.5 text-gray-400"
                   size={20}
                 />
               </div>
-              <div className="flex items-center space-x-6">
-                {[
-                  {
-                    icon: Bell,
-                    count: 14,
-                    bgColor: "bg-blue-100",
-                    badgeColor: "bg-blue-500",
-                  },
-                  {
-                    icon: MessageCircle,
-                    count: 53,
-                    bgColor: "bg-blue-100",
-                    badgeColor: "bg-blue-500",
-                  },
-                  {
-                    icon: Gift,
-                    count: 15,
-                    bgColor: "bg-gray-200",
-                    badgeColor: "bg-gray-500",
-                  },
-                  {
-                    icon: Settings,
-                    count: 19,
-                    bgColor: "bg-red-100",
-                    badgeColor: "bg-red-500",
-                  },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className={`relative p-3 rounded-lg ${item.bgColor}`}
+            </div>
+
+            {/* Right section for notifications and profile */}
+            <div className="flex items-center space-x-6">
+              {[
+                {
+                  icon: Bell,
+                  count: 14,
+                  bgColor: "bg-blue-100",
+                  badgeColor: "bg-blue-500",
+                },
+                {
+                  icon: MessageCircle,
+                  count: 53,
+                  bgColor: "bg-blue-100",
+                  badgeColor: "bg-blue-500",
+                },
+                {
+                  icon: Gift,
+                  count: 15,
+                  bgColor: "bg-gray-200",
+                  badgeColor: "bg-gray-500",
+                },
+                {
+                  icon: Settings,
+                  count: 19,
+                  bgColor: "bg-red-100",
+                  badgeColor: "bg-red-500",
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className={`relative p-3 rounded-lg ${item.bgColor}`}
+                >
+                  <item.icon className="text-gray-600" size={24} />
+                  <span
+                    className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor} text-white text-xs flex items-center justify-center rounded-full`}
                   >
-                    <item.icon className="text-gray-600" size={24} />
-                    <span
-                      className={`absolute -top-1 -right-1 w-5 h-5 ${item.badgeColor} text-white text-xs flex items-center justify-center rounded-full`}
-                    >
-                      {item.count}
-                    </span>
-                  </div>
-                ))}
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm">
-                    Hello, <strong>Samantha</strong>
+                    {item.count}
                   </span>
-                  <img
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full"
-                  />
                 </div>
+              ))}
+
+              {/* User profile section */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm">
+                  Hello, <strong>Samantha</strong>
+                </span>
+                <img
+                  src="\src\uploads\profile-pic.webp"
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
               </div>
             </div>
           </div>
@@ -331,7 +361,13 @@ const Dashboard = () => {
 
         <div className="px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+              <span className="text-gray-600 text-sm">
+               Hi Samantha, Welcome back to Sedap Admin!
+              </span>
+            </div>
+
             <button className="flex items-center space-x-2 border rounded-lg px-3 py-1.5 text-sm">
               <span>Filter</span>
               <ChevronDown size={16} />
@@ -445,17 +481,21 @@ const Dashboard = () => {
                 </button>
               </div>
               <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weeklyData}>
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#5B8FF9"
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {weeklyData.length === 0 ? (
+                  <div>No data available</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={weeklyData}>
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#5B8FF9"
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
           </div>
@@ -499,14 +539,21 @@ const Dashboard = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-semibold">Order List</h3>
                 <div className="flex items-center space-x-4">
-                  <button
-                    className="text-green-500 flex items-center"
-                    onClick={handleAddOrderClick}
-                  >
-                    <ShoppingCart size={16} className="mr-1" />
-                    Add Order
-                  </button>
-                  <button className="text-gray-500">Clear All</button>
+                  <div className="flex flex-col items-end space-y-2">
+                    <button
+                      className="text-green-500 flex items-center"
+                      onClick={handleAddOrderClick}
+                    >
+                      <ShoppingCart size={16} className="mr-1" />
+                      Add Order
+                    </button>
+                    <button
+                      className="text-gray-500"
+                      onClick={handleClearAllOrderDetails}
+                    >
+                      Clear All
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -523,6 +570,17 @@ const Dashboard = () => {
                 pauseOnHover
                 theme="light"
               />
+
+              {/* Download Report Button Positioned Near the Table */}
+              <div className="flex justify-end mb-4">
+                <button
+                  className="text-blue-500 text-sm flex items-center"
+                  onClick={() => handleExcelDownload(filteredData)}
+                >
+                  <Download size={16} className="mr-1" />
+                  Download Report
+                </button>
+              </div>
 
               {/* Add Order Modal */}
 
@@ -718,6 +776,7 @@ const Dashboard = () => {
                   />
                 </div>
               </div>
+
               {/* Table Section */}
               <table className="min-w-full bg-white shadow-md rounded-lg">
                 <thead>
@@ -801,7 +860,6 @@ const Dashboard = () => {
                   ))}
                 </tbody>
               </table>
-
               {/* Render Modal outside of the table */}
               {isEditModalOpen && selectedOrder && (
                 <Modal
@@ -813,22 +871,6 @@ const Dashboard = () => {
                   }}
                 />
               )}
-
-              <div className="flex justify-between items-center mt-4">
-                <p className="text-sm text-gray-500">Page 1 to 50 12</p>
-                <div className="flex space-x-2">
-                  {[1, 2, 3, "..."].map((page, index) => (
-                    <button
-                      key={index}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${
-                        page === 1 ? "bg-blue-500 text-white" : "text-gray-500"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>

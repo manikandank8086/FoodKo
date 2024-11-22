@@ -10,6 +10,8 @@ router.get('/orderDatais',adminDashboardController.getOrderDetails)
 
 router.put('/orderDatais/:id',adminDashboardController.updateOrderData)
 
+router.delete('/orderDetails',adminDashboardController.clearAllorderDetails)
+
 router.delete('/order/:orderId',adminDashboardController.deleteOrder)
 
 

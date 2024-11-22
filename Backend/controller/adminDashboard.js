@@ -1,3 +1,4 @@
+import { Tuple } from "@reduxjs/toolkit";
 import OrderModel from "../../Backend/model/orderModel.js";
 
 const addOrder = async (req, res) => {
@@ -142,6 +143,26 @@ const updateOrderData = async (req, res) => {
   }
 };
 
+const clearAllorderDetails = async (req, res) => {
+  try {
+    console.log("working controller");
+    const deleteAllOrders = await OrderModel.deleteMany();
+    if (deleteAllOrders) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Cleare all oreders" });
+    }
+    return res
+      .status(401)
+      .json({ success: false, message: "Cannot clear all orders" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 const deleteOrder = async (req, res) => {
   try {
     console.log("working controller");
@@ -166,4 +187,10 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-export { addOrder, getOrderDetails, updateOrderData, deleteOrder };
+export {
+  addOrder,
+  getOrderDetails,
+  updateOrderData,
+  clearAllorderDetails,
+  deleteOrder,
+};
