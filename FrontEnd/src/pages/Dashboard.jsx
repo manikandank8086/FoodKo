@@ -355,7 +355,7 @@ const Dashboard = () => {
                   Hello, <strong>Samantha</strong>
                 </span>
                 <img
-                  src="\public\uploads\profile-pic.webp"
+                  src="\uploads\profile-pic.webp"
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />
