@@ -111,7 +111,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchOrderData = () => {
       axios
-        .get("http://localhost:3000/orderDatais")
+        .get(`${import.meta.env.VITE_BACKEND_URL}/orderDatais`)
         .then((res) => {
           if (res.data.success) {
             console.log("Data fetched successfully");
@@ -156,7 +156,7 @@ const Dashboard = () => {
       console.log("Form submitted", values);
 
       axios
-        .post("http://localhost:3000/addOrder", values)
+        .post(`${import.meta.env.VITE_BACKEND_URL}/addOrder`, values)
         .then((res) => {
           if (res.data.success) {
             resetForm();
@@ -189,7 +189,7 @@ const Dashboard = () => {
 
   const handleClearAllOrderDetails = async (req, res) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/orderDetails`);
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/orderDetails`);
       if (response.status === 200) {
         toast.success("Delete Success");
         setOrderData([]);
@@ -203,7 +203,7 @@ const Dashboard = () => {
   const handleDeleteItem = async (orderId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/order/${orderId}`
+        `${import.meta.env.VITE_BACKEND_URL}/order/${orderId}`
       );
       if (response.status === 200) {
         toast.success("Delete Success");
