@@ -1,6 +1,5 @@
 import * as XLSX from "xlsx";
 
-// Function to generate and download Excel file
 export const generateExcelFile = (orderData, fileName = "Order_List.xlsx") => {
   // Transform data to the Excel format
   const formattedData = orderData.map((order) => ({
@@ -22,7 +21,7 @@ export const generateExcelFile = (orderData, fileName = "Order_List.xlsx") => {
   // Style the worksheet header
   const headerStyle = {
     font: { bold: true },
-    fill: { fgColor: { rgb: "FFFF99" } }, // Light Yellow background
+    fill: { fgColor: { rgb: "FFFF99" } }, 
     alignment: { horizontal: "center", vertical: "center" },
   };
   const range = XLSX.utils.decode_range(worksheet["!ref"]);
@@ -32,7 +31,6 @@ export const generateExcelFile = (orderData, fileName = "Order_List.xlsx") => {
     worksheet[cellAddress].s = headerStyle;
   }
 
-  // Optional: Set column widths
   worksheet["!cols"] = [
     { wch: 15 },
     { wch: 20 },

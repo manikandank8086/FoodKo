@@ -109,33 +109,36 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/orderDatais")
-      .then((res) => {
-        if (res.data.success) {
-          console.log("Data fetched successfully");
-          console.log(res.data.data);
+    const fetchOrderData = () => {
+      axios
+        .get("http://localhost:3000/orderDatais")
+        .then((res) => {
+          if (res.data.success) {
+            console.log("Data fetched successfully");
+            console.log(res.data.data);
 
-          const {
-            orderDetails,
-            totalOrders,
-            totalDeliveredCount,
-            totalCancelledCount,
-            totalRevenue,
-          } = res.data.data;
+            const {
+              orderDetails,
+              totalOrders,
+              totalDeliveredCount,
+              totalCancelledCount,
+              totalRevenue,
+            } = res.data.data;
 
-          setOrderData(orderDetails);
-          setTotalOrderCount(totalOrders);
-          setTotalCancelCount(totalCancelledCount);
-          setTotalRevenue(totalRevenue);
-          setDeliveredCount(totalDeliveredCount);
-        } else {
-          console.error("Failed to fetch data");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
+            setOrderData(orderDetails);
+            setTotalOrderCount(totalOrders);
+            setTotalCancelCount(totalCancelledCount);
+            setTotalRevenue(totalRevenue);
+            setDeliveredCount(totalDeliveredCount);
+          } else {
+            console.error("Failed to fetch data");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data: ", error);
+        });
+    };
+    fetchOrderData();
   }, []);
 
   const formik = useFormik({
@@ -159,6 +162,7 @@ const Dashboard = () => {
             resetForm();
             setIsModalOpen(false);
             toast.success(res.data.message);
+            window.location.reload();
           } else {
             toast.error(res.data.message);
             console.log("Order not added");
@@ -188,6 +192,7 @@ const Dashboard = () => {
       const response = await axios.delete(`http://localhost:3000/orderDetails`);
       if (response.status === 200) {
         toast.success("Delete Success");
+        setOrderData([]);
       }
     } catch (error) {
       toast.error("Cannot delete all orders");
@@ -364,7 +369,7 @@ const Dashboard = () => {
             <div>
               <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
               <span className="text-gray-600 text-sm">
-               Hi Samantha, Welcome back to Sedap Admin!
+                Hi Samantha, Welcome back to Sedap Admin!
               </span>
             </div>
 
@@ -867,7 +872,7 @@ const Dashboard = () => {
                   onClose={() => setIsEditModalOpen(false)}
                   onSave={(updatedOrder) => {
                     setIsEditModalOpen(false);
-                    toast.success("Update success");
+                    window.location.reload();
                   }}
                 />
               )}

@@ -1,25 +1,23 @@
 import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
-import * as Yup from 'yup'; // Import Yup for validation
-import { editOrderDetailsValidation } from '../utils/Validation'; // Validation schema
+import { editOrderDetailsValidation } from '../utils/Validation'; 
 
 const Modal = ({ order, onClose, onSave }) => {
-  // Initialize formik with initial values and validation schema
   const formik = useFormik({
     initialValues: {
       orderId: order.orderId,
-      customer: order.customerName, // Updated to match validation field name
-      product: order.item, // Updated to match validation field name
+      customer: order.customerName, 
+      product: order.item, 
       price: order.price,
       quantity: order.quantity,
       location: order.location,
-      status: order.status || '',  // Add status field
-      orderDate: order.orderDate || ''  // Add order date field
+      status: order.status || '', 
+      orderDate: order.orderDate || ''  
     },
     validationSchema: editOrderDetailsValidation,
     onSubmit: async (values) => {
-        console.log("Form submitted", values);  // Check if the form is submitted
+        console.log("Form submitted", values);  
 
       try {
         const response = await axios.put(`http://localhost:3000/orderDatais/${order.orderId}`, values);

@@ -8,7 +8,7 @@ const Layout = () => {
     <div className="flex">
       <Sidebar />
       <main className="flex-1 ">
-        <Outlet /> {/* This is where the routed components will be rendered */}
+        <Outlet /> 
       </main>
     </div>
   );

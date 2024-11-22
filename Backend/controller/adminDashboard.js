@@ -1,4 +1,3 @@
-import { Tuple } from "@reduxjs/toolkit";
 import OrderModel from "../../Backend/model/orderModel.js";
 
 const addOrder = async (req, res) => {
@@ -29,11 +28,13 @@ const addOrder = async (req, res) => {
         .status(200)
         .json({ success: true, message: "Order added success" });
     }
+
     return res
       .status(401)
       .json({ success: false, message: "order adding failed" });
   } catch (error) {
     console.log("err" + error);
+
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
