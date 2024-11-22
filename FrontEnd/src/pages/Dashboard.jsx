@@ -111,7 +111,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchOrderData = () => {
       axios
-        .get(`${import.meta.env.VITE_BACKEND_URL}/orderDatais`)
+        .get(`https://foodko.instantfix.online/orderDatais`)
         .then((res) => {
           if (res.data.success) {
             console.log("Data fetched successfully");
@@ -156,7 +156,7 @@ const Dashboard = () => {
       console.log("Form submitted", values);
 
       axios
-        .post(`${import.meta.env.VITE_BACKEND_URL}/addOrder`, values)
+        .post(`https://foodko.instantfix.online/addOrder`, values)
         .then((res) => {
           if (res.data.success) {
             resetForm();
@@ -189,7 +189,7 @@ const Dashboard = () => {
 
   const handleClearAllOrderDetails = async (req, res) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/orderDetails`);
+      const response = await axios.delete(`https://foodko.instantfix.online/orderDetails`);
       if (response.status === 200) {
         toast.success("Delete Success");
         setOrderData([]);
@@ -203,7 +203,7 @@ const Dashboard = () => {
   const handleDeleteItem = async (orderId) => {
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/order/${orderId}`
+        `https://foodko.instantfix.online/order/${orderId}`
       );
       if (response.status === 200) {
         toast.success("Delete Success");
@@ -355,7 +355,7 @@ const Dashboard = () => {
                   Hello, <strong>Samantha</strong>
                 </span>
                 <img
-                  src="\src\uploads\profile-pic.webp"
+                  src="\public\uploads\profile-pic.webp"
                   alt="Profile"
                   className="w-8 h-8 rounded-full"
                 />

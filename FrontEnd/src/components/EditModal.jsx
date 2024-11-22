@@ -20,7 +20,7 @@ const Modal = ({ order, onClose, onSave }) => {
         console.log("Form submitted", values);  
 
       try {
-        const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/orderDatais/${order.orderId}`, values);
+        const response = await axios.put(`https://foodko.instantfix.online/orderDatais/${order.orderId}`, values);
         if (response.status === 200) {
           onSave(values);
           onClose();
