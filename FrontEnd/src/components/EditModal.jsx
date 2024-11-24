@@ -19,8 +19,6 @@ const Modal = ({ order, onClose, onSave }) => {
     onSubmit: async (values) => {
       console.log("Form submitted", values);
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      alert(backendUrl); 
-
       try {
         const response = await axios.put(
           `${backendUrl}/orderDatais/${order.orderId}`,

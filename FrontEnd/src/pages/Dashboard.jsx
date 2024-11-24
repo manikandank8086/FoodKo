@@ -111,8 +111,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchOrderData = () => {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      alert(backendUrl); 
-  
       axios
         .get(`${backendUrl}/orderDatais`)
         .then((res) => {
