@@ -110,13 +110,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchOrderData = () => {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      alert(backendUrl); 
+  
       axios
-        .get(`https://foodko.instantfix.online/orderDatais`)
+        .get(`${backendUrl}/orderDatais`)
         .then((res) => {
           if (res.data.success) {
             console.log("Data fetched successfully");
             console.log(res.data.data);
-
+  
             const {
               orderDetails,
               totalOrders,
@@ -124,14 +127,14 @@ const Dashboard = () => {
               totalCancelledCount,
               totalRevenue,
             } = res.data.data;
-
+  
             setOrderData(orderDetails);
             setTotalOrderCount(totalOrders);
             setTotalCancelCount(totalCancelledCount);
             setTotalRevenue(totalRevenue);
             setDeliveredCount(totalDeliveredCount);
           } else {
-            console.error("Failed to fetch data");
+            console.error("Failed to fetch data: " + res.data.message);
           }
         })
         .catch((error) => {
@@ -140,6 +143,7 @@ const Dashboard = () => {
     };
     fetchOrderData();
   }, []);
+  
 
   const formik = useFormik({
     initialValues: {
@@ -154,9 +158,11 @@ const Dashboard = () => {
     validationSchema: addOrderValidation,
     onSubmit: (values, { resetForm }) => {
       console.log("Form submitted", values);
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
       axios
-        .post(`https://foodko.instantfix.online/addOrder`, values)
+        .post(`${backendUrl}/addOrder`, values)
         .then((res) => {
           if (res.data.success) {
             resetForm();
@@ -188,8 +194,12 @@ const Dashboard = () => {
   };
 
   const handleClearAllOrderDetails = async (req, res) => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     try {
-      const response = await axios.delete(`https://foodko.instantfix.online/orderDetails`);
+      const response = await axios.delete(
+        `${backendUrl}/orderDetails`
+      );
       if (response.status === 200) {
         toast.success("Delete Success");
         setOrderData([]);
@@ -201,9 +211,11 @@ const Dashboard = () => {
   };
 
   const handleDeleteItem = async (orderId) => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     try {
       const response = await axios.delete(
-        `https://foodko.instantfix.online/order/${orderId}`
+        `${backendUrl}/order/${orderId}`
       );
       if (response.status === 200) {
         toast.success("Delete Success");
@@ -287,29 +299,30 @@ const Dashboard = () => {
     });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        {/* Header */}
-        <header className="bg-white shadow-sm px-8 py-4">
-          <div className="flex items-center justify-between">
-            {/* Left section for the search bar */}
-            <div className="flex items-center flex-1 space-x-6">
-              <div className="relative w-full max-w-lg">
-                <input
-                  type="text"
-                  placeholder="Search here"
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                <Search
-                  className="absolute left-3 top-2.5 text-gray-400"
-                  size={20}
-                />
-              </div>
+    <div className="flex min-h-screen bg-gray-50 flex-col md:flex-row lg:gap-6">
+    {/* Main Content */}
+    <div className="flex-1 overflow-auto">
+      {/* Header */}
+      <header className="bg-white shadow-sm px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+          {/* Left section for the search bar */}
+          <div className="flex items-center flex-1 space-x-6 w-full sm:w-auto">
+            <div className="relative w-full max-w-md">
+              <input
+                type="text"
+                placeholder="Search here"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <Search
+                className="absolute left-3 top-2.5 text-gray-400"
+                size={20}
+              />
             </div>
-
-            {/* Right section for notifications and profile */}
-            <div className="flex items-center space-x-6">
+          </div>
+  
+          {/* Right section for notifications and profile */}
+          <div className="flex items-center justify-between w-full sm:w-auto space-x-4 sm:space-x-6">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               {[
                 {
                   icon: Bell,
@@ -338,7 +351,7 @@ const Dashboard = () => {
               ].map((item, index) => (
                 <div
                   key={index}
-                  className={`relative p-3 rounded-lg ${item.bgColor}`}
+                  className={`relative p-3 rounded-lg ${item.bgColor} transition-transform transform hover:scale-105`}
                 >
                   <item.icon className="text-gray-600" size={24} />
                   <span
@@ -348,162 +361,177 @@ const Dashboard = () => {
                   </span>
                 </div>
               ))}
-
-              {/* User profile section */}
-              <div className="flex items-center space-x-2">
-                <span className="text-sm">
-                  Hello, <strong>Samantha</strong>
-                </span>
-                <img
-                  src="\uploads\profile-pic.webp"
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
-                />
-              </div>
             </div>
-          </div>
-        </header>
-
-        <div className="px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
-              <span className="text-gray-600 text-sm">
-                Hi Samantha, Welcome back to Sedap Admin!
+  
+            {/* User profile section */}
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <span className="text-sm hidden md:inline-block">
+                Hello, <strong>Samantha</strong>
               </span>
+              <img
+                src="/uploads/profile-pic.webp"
+                alt="Profile"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full object-cover"
+              />
             </div>
-
-            <button className="flex items-center space-x-2 border rounded-lg px-3 py-1.5 text-sm">
-              <span>Filter</span>
-              <ChevronDown size={16} />
-            </button>
           </div>
         </div>
-
-        {/* Dashboard Content */}
-        <div className="p-8">
-          {/* Metric Cards */}
-          <div className="grid grid-cols-4 gap-6">
-            {[
-              {
-                icon: Package,
-                value: totalOrder,
-                label: "Total Orders",
-                change: "+12.5%",
-                color: "bg-green-100",
-              },
-              {
-                icon: Truck,
-                value: totalDelivered,
-                label: "Total Delivered",
-                change: "+8.3%",
-                color: "bg-green-100",
-              },
-              {
-                icon: XCircle,
-                value: totalCancellCount,
-                label: "Total Cancelled",
-                change: "-3.2%",
-                color: "bg-green-100",
-              },
-              {
-                icon: DollarSign,
-                value: totalRevenue,
-                label: "Total Revenue",
-                change: "+5.1%",
-                color: "bg-green-100",
-              },
-            ].map((metric, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-sm p-6 flex items-center space-x-4"
-              >
-                <div className={`${metric.color} p-3 rounded-full`}>
-                  <metric.icon size={24} className="text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold">{metric.value}</h3>
-                  <p className="text-sm text-gray-500">{metric.label}</p>
-                  <p className="text-xs text-gray-400">{metric.change}</p>
-                </div>
-              </div>
-            ))}
+      </header>
+  
+      <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+          <div>
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
+              Dashboard
+            </h1>
+            <span className="text-gray-600 text-sm">
+              Hi Samantha, Welcome back to Sedap Admin!
+            </span>
           </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-2 gap-6 mb-8">
-            {/* Pie Charts */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold">Pie Chart</h3>
-                <div className="flex items-center space-x-2">
-                  <label className="flex items-center space-x-1">
-                    <input type="checkbox" className="form-checkbox" />
-                    <span>Chart</span>
-                  </label>
-                  <label className="flex items-center space-x-1">
-                    <input type="checkbox" className="form-checkbox" />
-                    <span className="text-red-500">Show Value</span>
-                  </label>
-                  <MoreVertical size={20} className="text-gray-400" />
-                </div>
+  
+          <button className="flex items-center space-x-2 border rounded-lg px-3 py-1.5 text-sm bg-white hover:bg-gray-50 transition-colors">
+            <span>Filter</span>
+            <ChevronDown size={16} />
+          </button>
+        </div>
+      </div>
+  
+      {/* Dashboard Content */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[
+            {
+              icon: Package,
+              value: totalOrder,
+              label: "Total Orders",
+              change: "+12.5%",
+              color: "bg-green-100",
+            },
+            {
+              icon: Truck,
+              value: totalDelivered,
+              label: "Total Delivered",
+              change: "+8.3%",
+              color: "bg-green-100",
+            },
+            {
+              icon: XCircle,
+              value: totalCancellCount,
+              label: "Total Cancelled",
+              change: "-3.2%",
+              color: "bg-green-100",
+            },
+            {
+              icon: DollarSign,
+              value: totalRevenue,
+              label: "Total Revenue",
+              change: "+5.1%",
+              color: "bg-green-100",
+            },
+          ].map((metric, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-sm p-6 flex items-center space-x-4"
+            >
+              <div className={`${metric.color} p-3 rounded-full`}>
+                <metric.icon size={24} className="text-green-600" />
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                {PieData.map((data, index) => (
-                  <div key={index} className="h-32">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={[
-                            { value: data.value },
-                            { value: 100 - data.value },
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={25}
-                          outerRadius={40}
-                          dataKey="value"
-                        >
-                          <Cell fill={data.color} />
-                          <Cell fill="#F3F4F6" />
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <p className="text-center text-sm mt-2">{data.name}</p>
-                    <p className="text-center font-semibold">{data.value}%</p>
-                  </div>
-                ))}
+              <div>
+                <h3 className="text-2xl font-semibold">{metric.value}</h3>
+                <p className="text-sm text-gray-500">{metric.label}</p>
+                <p className="text-xs text-gray-400">{metric.change}</p>
               </div>
             </div>
-
-            {/* Weekly Chart */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold">Chart Order</h3>
-                <button className="text-blue-500 text-sm flex items-center">
-                  <Download size={16} className="mr-1" />
-                  Save Report
-                </button>
+          ))}
+        </div>
+  
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Pie Charts */}
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+              <h3 className="text-lg font-semibold">Pie Chart</h3>
+              <div className="flex flex-wrap items-center space-x-2 sm:space-x-4">
+                <label className="flex items-center space-x-1 text-sm">
+                  <input type="checkbox" className="form-checkbox w-4 h-4" />
+                  <span>Chart</span>
+                </label>
+                <label className="flex items-center space-x-1 text-sm">
+                  <input type="checkbox" className="form-checkbox w-4 h-4" />
+                  <span className="text-red-500">Show Value</span>
+                </label>
+                <MoreVertical size={20} className="text-gray-400 ml-2" />
               </div>
-              <div className="h-64">
-                {weeklyData.length === 0 ? (
-                  <div>No data available</div>
-                ) : (
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {PieData.map((data, index) => (
+                <div
+                  key={index}
+                  className="h-32 sm:h-36 md:h-40 lg:h-48 xl:h-52"
+                >
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={weeklyData}>
-                      <Line
-                        type="monotone"
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { value: data.value },
+                          { value: 100 - data.value },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius="40%"
+                        outerRadius="80%"
                         dataKey="value"
-                        stroke="#5B8FF9"
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                      />
-                    </LineChart>
+                      >
+                        <Cell fill={data.color} />
+                        <Cell fill="#F3F4F6" />
+                      </Pie>
+                    </PieChart>
                   </ResponsiveContainer>
-                )}
-              </div>
+                  <p className="text-center text-xs sm:text-sm mt-2">
+                    {data.name}
+                  </p>
+                  <p className="text-center text-sm sm:text-base font-semibold">
+                    {data.value}%
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
+  
+          {/* Weekly Chart */}
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-semibold">Chart Order</h3>
+              <button className="text-blue-500 text-sm flex items-center">
+                <Download size={16} className="mr-1" />
+                Save Report
+              </button>
+            </div>
+            <div className="h-64">
+              {weeklyData.length === 0 ? (
+                <div>No data available</div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={weeklyData}>
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#5B8FF9"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </div>
+      
+  
+    
+  
+
 
           {/* Monthly Revenue Chart */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">

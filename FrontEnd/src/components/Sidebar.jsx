@@ -13,7 +13,7 @@ import {
 
 const Sidebar = () => {
   return (
-    <div className="w-64 bg-white min-h-screen shadow-lg">
+    <div className="w-full md:w-1/4 lg:w-1/5 bg-white shadow-md p-4">
       <div className="p-4">
         <div className="flex items-center space-x-2">
           <img 
